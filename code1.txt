@@ -1,0 +1,42 @@
+package com.example.plants.viewModel
+
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import com.example.plants.model.Plants
+import androidx.lifecycle.viewModelScope
+import com.example.plants.model.PlantsDatabase
+import com.example.plants.model.PlantsRepo
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
+class PlantsViewModel(application: Application):AndroidViewModel(application){
+    val getAllPlants : LiveData<List<Plants>>
+    val plantsRepo:PlantsRepo
+
+    init {
+        val database=PlantsDatabase.getDatabase(application)
+        plantsRepo=PlantsRepo(database.getPlantsDao())
+        getAllPlants=plantsRepo.getAllPlants()
+    }
+    fun addPlants(plants: Plants) {
+        viewModelScope.launch(Dispatchers.IO) {
+            plantsRepo.addPlants(plants)
+        }
+    }
+
+    fun deletePlants(plants: Plants){
+        viewModelScope.launch(Dispatchers.IO) {
+            plantsRepo.deletePlants(plants)
+        }
+    }
+    fun updatePlants(plants: Plants){
+        viewModelScope.launch(Dispatchers.IO) {
+            plantsRepo.updatePlants(plants)
+        }
+
+    }
+
+
+
+}

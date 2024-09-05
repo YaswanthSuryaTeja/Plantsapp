@@ -1,0 +1,54 @@
+package com.example.plants.Adapter
+
+import android.annotation.SuppressLint
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import com.example.plants.databinding.PlantsLayoutBinding
+import com.example.plants.model.Plants
+
+class PlantsAdapter(private val onClick: OnClick) : RecyclerView.Adapter<PlantsAdapter.ViewHolder>() {
+
+    private val plantsList: ArrayList<Plants> = arrayListOf()  // Correct type
+
+    fun updateList(newList: List<Plants>) {
+        plantsList.clear()
+        plantsList.addAll(newList)
+        notifyDataSetChanged()  // Notify adapter of data changes
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val binding = PlantsLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val currentPos = plantsList[position]
+        holder.series.text = (position + 1).toString()
+        holder.itemName.text = currentPos.itemName
+        holder.itemQuantity.text = currentPos.itemQuantity
+
+        holder.delete.setOnClickListener {
+            onClick.onDeleteClick(currentPos)
+        }
+        holder.itemView.setOnClickListener {
+            onClick.onClick(currentPos)
+        }
+    }
+
+    override fun getItemCount(): Int {
+        return plantsList.size
+    }
+
+    inner class ViewHolder(binding: PlantsLayoutBinding) : RecyclerView.ViewHolder(binding.root) {
+        val series = binding.series
+        val itemName = binding.itemName
+        val itemQuantity = binding.itemQuantity
+        val delete = binding.delete
+    }
+}
+
+interface OnClick {
+    fun onClick(plants: Plants)
+    fun onDeleteClick(plants: Plants)
+}
